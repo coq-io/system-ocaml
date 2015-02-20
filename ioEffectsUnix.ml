@@ -68,3 +68,10 @@ let print (message : string) : bool Lwt.t =
     Lwt.bind (Lwt_io.print message) (fun _ ->
     Lwt.return true))
     (fun _ -> Lwt.return false)
+
+(** Read a line on the standard input. *)
+let read_line () : string option Lwt.t =
+  Lwt.catch (fun _ ->
+    Lwt.bind (Lwt_io.read_line Lwt_io.stdin) (fun line ->
+    Lwt.return (Some line)))
+    (fun _ -> Lwt.return None)
