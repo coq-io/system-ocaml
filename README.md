@@ -1,5 +1,5 @@
-# IO Effects for Unix (extraction)
-Unix effects for Coq extracted programs.
+# IO Effects
+Coq system effects for extraction to [OCaml](http://ocaml.org/).
 
 ## Use
-See the [io-effects-unix](https://github.com/clarus/io-effects-unix) project.
+See the [io-system](https://github.com/clarus/io-system) project.
