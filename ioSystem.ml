@@ -20,6 +20,10 @@ module String = struct
     buffer
 end
 
+(** The command line arguments of the program. *)
+let argv : string list =
+  Array.to_list Sys.argv
+
 (** List the files of a directory. *)
 let list_files (directory : string) : string list option Lwt.t =
   Lwt.catch (fun _ ->
