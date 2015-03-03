@@ -1,11 +1,11 @@
 default:
-	ocamlbuild ioEffectsUnix.cma ioEffectsUnix.cmxa -use-ocamlfind -package lwt,lwt.unix
+	ocamlbuild ioSystem.cma ioSystem.cmxa -use-ocamlfind -package lwt,lwt.unix
 
 install: default
-	ocamlfind install io-effects-unix META _build/ioEffectsUnix.cmi _build/ioEffectsUnix.cmx _build/ioEffectsUnix.a _build/ioEffectsUnix.cma _build/ioEffectsUnix.cmxa _build/ioEffectsUnix.mllib
+	ocamlfind install io-system META _build/ioSystem.cmi _build/ioSystem.cmx _build/ioSystem.a _build/ioSystem.cma _build/ioSystem.cmxa _build/ioSystem.mllib
 
 uninstall:
-	ocamlfind remove io-effects-unix
+	ocamlfind remove io-system
 
 clean:
 	ocamlbuild -clean
