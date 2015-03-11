@@ -49,7 +49,7 @@ let join (x : 'a Lwt.t) (y : 'b Lwt.t) : ('a * 'b) Lwt.t =
 
 (** First. *)
 let first (x : 'a Lwt.t) (y : 'b Lwt.t) : ('a, 'b) Sum.t Lwt.t =
-  Lwt.choose [
+  Lwt.pick [
     Lwt.bind x (fun x -> Lwt.return @@ Sum.Left x);
     Lwt.bind y (fun y -> Lwt.return @@ Sum.Right y)]
 
