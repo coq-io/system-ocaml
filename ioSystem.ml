@@ -1,15 +1,25 @@
 (** Some OCaml primitives for the extraction. *)
 open Big_int
 
-module Sum = struct
-  type ('a, 'b) t =
-    | Left of 'a
-    | Right of 'b
+(** Interface to OCaml's big integers. *)
+module Big = struct
+  let rec to_positive_aux (big : big_int) xH xO xI =
+    if eq_big_int big unit_big_int then
+      xH
+    else
+      let big' = to_positive_aux (div_big_int big (big_int_of_int 2)) xH xO xI in
+      if eq_big_int (mod_big_int big (big_int_of_int 2)) zero_big_int then
+        xO big'
+      else
+        xI big'
 
-  let destruct (s : ('a, 'b) t) (c_x : 'a -> 'c) (c_y : 'b -> 'c) : 'c =
-    match s with
-    | Left x -> c_x x
-    | Right y -> c_y y
+  let to_Z_aux (big : big_int) z_O z_pos z_neg xH xO xI =
+    if eq_big_int big zero_big_int then
+      z_O
+    else if gt_big_int big zero_big_int then
+      z_pos (to_positive_aux big xH xO xI)
+    else
+      z_pos (to_positive_aux (minus_big_int big) xH xO xI)
 end
 
 (** Interface to the OCaml strings. *)
@@ -29,6 +39,17 @@ module String = struct
     let buffer = String.create length in
     List.iteri (fun i c -> String.set buffer i c) s;
     buffer
+end
+
+module Sum = struct
+  type ('a, 'b) t =
+    | Left of 'a
+    | Right of 'b
+
+  let destruct (s : ('a, 'b) t) (c_x : 'a -> 'c) (c_y : 'b -> 'c) : 'c =
+    match s with
+    | Left x -> c_x x
+    | Right y -> c_y y
 end
 
 (** The command line arguments of the program. *)
