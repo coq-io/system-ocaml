@@ -117,11 +117,10 @@ let system (command : string) : bool option Lwt.t =
     (fun _ -> Lwt.return None)
 
 (** Run a command controlling the outputs. *)
-let eval (command : string) (args : string list)
-  : ((big_int * string) * string) option Lwt.t =
+let eval (command : string list) : ((big_int * string) * string) option Lwt.t =
   Lwt.catch (fun _ ->
-    let args = Array.of_list args in
-    Lwt_process.with_process_full (command, args) (fun process ->
+    let command = Array.of_list command in
+    Lwt_process.with_process_full ("", command) (fun process ->
     Lwt.bind (process#status) (fun (status : Unix.process_status) ->
     Lwt.bind (Lwt_io.read process#stdout) (fun (output : string) ->
     Lwt.bind (Lwt_io.read process#stderr) (fun (error : string) ->
