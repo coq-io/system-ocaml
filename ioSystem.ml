@@ -95,7 +95,7 @@ let system (command : string) : bool option Lwt.t =
     | Lwt_unix.WEXITED _ | Lwt_unix.WSIGNALED _ | Lwt_unix.WSTOPPED _ -> false)))
     (fun _ -> Lwt.return None)
 
-(** Run a command controlling the input and outputs. *)
+(** Run a command controlling the input and the outputs. *)
 let eval (command : string) (args : string list) (input : string)
   : (big_int * string * string) option Lwt.t =
   Lwt.catch (fun _ ->
