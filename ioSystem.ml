@@ -116,23 +116,22 @@ let system (command : string) : bool option Lwt.t =
     | Lwt_unix.WEXITED _ | Lwt_unix.WSIGNALED _ | Lwt_unix.WSTOPPED _ -> false)))
     (fun _ -> Lwt.return None)
 
-(** Run a command controlling the input and the outputs. *)
-let eval (command : string) (args : string list) (input : string)
+(** Run a command controlling the outputs. *)
+let eval (command : string) (args : string list)
   : ((big_int * string) * string) option Lwt.t =
   Lwt.catch (fun _ ->
     let args = Array.of_list args in
     Lwt_process.with_process_full (command, args) (fun process ->
-    Lwt.bind (Lwt_io.write process#stdin input) (fun (_ : unit) ->
-    Lwt.bind (Lwt_io.close process#stdin) (fun (_ : unit) ->
+    Lwt.bind (process#status) (fun (status : Unix.process_status) ->
     Lwt.bind (Lwt_io.read process#stdout) (fun (output : string) ->
     Lwt.bind (Lwt_io.read process#stderr) (fun (error : string) ->
     Lwt.bind (Lwt.join [
+      Lwt_io.close process#stdin;
       Lwt_io.close process#stdout;
       Lwt_io.close process#stderr]) (fun (_ : unit) ->
-    Lwt.bind (process#status) (fun (status : Unix.process_status) ->
     let status = match status with
       | Unix.WEXITED n | Unix.WSIGNALED n | Unix.WSTOPPED n -> n in
-    Lwt.return @@ Some ((big_int_of_int status, output), error)))))))))
+    Lwt.return @@ Some ((big_int_of_int status, output), error)))))))
     (fun _ -> Lwt.return None)
 
 (** Print a message on the standard output. *)
