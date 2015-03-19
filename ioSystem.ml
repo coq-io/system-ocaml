@@ -118,7 +118,7 @@ let system (command : string) : bool option Lwt.t =
 
 (** Run a command controlling the input and the outputs. *)
 let eval (command : string) (args : string list) (input : string)
-  : (big_int * string * string) option Lwt.t =
+  : (big_int * (string * string)) option Lwt.t =
   Lwt.catch (fun _ ->
     let args = Array.of_list args in
     Lwt_process.with_process_full (command, args) (fun process ->
@@ -132,7 +132,7 @@ let eval (command : string) (args : string list) (input : string)
     Lwt.bind (process#status) (fun (status : Unix.process_status) ->
     let status = match status with
       | Unix.WEXITED n | Unix.WSIGNALED n | Unix.WSTOPPED n -> n in
-    Lwt.return @@ Some (big_int_of_int status, output, error)))))))))
+    Lwt.return @@ Some (big_int_of_int status, (output, error))))))))))
     (fun _ -> Lwt.return None)
 
 (** Print a message on the standard output. *)
