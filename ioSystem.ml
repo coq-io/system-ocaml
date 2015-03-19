@@ -96,11 +96,11 @@ let system (command : string) : bool option Lwt.t =
     (fun _ -> Lwt.return None)
 
 (** Run a command controlling the input and outputs. *)
-let eval (command : string * string list) (input : string)
+let eval (command : string) (args : string list) (input : string)
   : (big_int * string * string) option Lwt.t =
   Lwt.catch (fun _ ->
-    let command = (fst command, Array.of_list @@ snd command) in
-    Lwt_process.with_process_full command (fun process ->
+    let args = Array.of_list args in
+    Lwt_process.with_process_full (command, args) (fun process ->
     Lwt.bind (Lwt_io.write process#stdin input) (fun (_ : unit) ->
     Lwt.bind (Lwt_io.close process#stdin) (fun (_ : unit) ->
     Lwt.bind (Lwt_io.read process#stdout) (fun (output : string) ->
