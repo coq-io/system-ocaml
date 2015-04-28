@@ -41,17 +41,6 @@ module String = struct
     buffer
 end
 
-module Sum = struct
-  type ('a, 'b) t =
-    | Left of 'a
-    | Right of 'b
-
-  let destruct (s : ('a, 'b) t) (c_x : 'a -> 'c) (c_y : 'b -> 'c) : 'c =
-    match s with
-    | Left x -> c_x x
-    | Right y -> c_y y
-end
-
 (** The command line arguments of the program. *)
 let argv : string list =
   Array.to_list Sys.argv
@@ -68,11 +57,9 @@ let join (x : 'a Lwt.t) (y : 'b Lwt.t) : ('a * 'b) Lwt.t =
       | (Some x, Some y) -> Lwt.return (x, y)
       | _ -> Lwt.fail_with "The join expected two answers.")
 
-(** First. *)
-let first (x : 'a Lwt.t) (y : 'b Lwt.t) : ('a, 'b) Sum.t Lwt.t =
-  Lwt.pick [
-    Lwt.bind x (fun x -> Lwt.return @@ Sum.Left x);
-    Lwt.bind y (fun y -> Lwt.return @@ Sum.Right y)]
+(** Choose. *)
+let choose (x1 : 'a Lwt.t) (x2 : 'a Lwt.t) : 'a Lwt.t =
+  Lwt.pick [x1; x2]
 
 (** List the files of a directory. *)
 let list_files (directory : string) : string list option Lwt.t =
