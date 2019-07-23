@@ -36,9 +36,9 @@ module String = struct
   (** Import a Coq string. *)
   let of_lstring (s : char list) : string =
     let length = List.length s in
-    let buffer = String.create length in
-    List.iteri (fun i c -> String.set buffer i c) s;
-    buffer
+    let buffer = Bytes.create length in
+    List.iteri (fun i c -> Bytes.set buffer i c) s;
+    Bytes.to_string buffer
 end
 
 (** The command line arguments of the program. *)
