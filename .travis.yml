@@ -8,6 +8,7 @@ services:
 env:
   global:
   - OPAMJOBS="2"
+  - PACKAGE_NAME="coq-io-system-ocaml"
   matrix:
   - OCAML_IMAGE="ocaml/opam2:4.02"
   - OCAML_IMAGE="ocaml/opam2:4.03"
@@ -28,8 +29,7 @@ install: |
     set -ex  # -e = exit on failure; -x = trace for debug
     sudo apt-get install m4 -y
     opam update -y
-    opam pin add coq-io-system-ocaml.opam . --kind=path -y --no-action
-    opam install coq-io-system-ocaml --deps-only
+    opam pin add ${PACKAGE_NAME}.opam . --kind=path -y --no-action
     opam config list
     opam repo list
     opam pin list
@@ -43,7 +43,14 @@ script:
     export PS4='+ \e[33;1m(\$0 @ line \$LINENO) \$\e[0m '
     set -ex
     sudo chown -R opam:opam /home/project
-    opam install coq-io-system-ocaml -v
+    # Check if the package is compatible with the current environment
+    if opam install ${PACKAGE_NAME} --show-action; then
+      # First install the dependencies
+      opam install ${PACKAGE_NAME} --deps-only
+      opam list
+      # Then install the package itself in verbose mode
+      opam install ${PACKAGE_NAME} -v
+    fi;
     " script
-- docker stop OCAML  # optional
+- docker stop OCAML # optional
 - echo -en 'travis_fold:end:script\\r'
